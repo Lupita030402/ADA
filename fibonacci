@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+// Función recursiva para calcular el enésimo número de Fibonacci
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n; // Casos base: fibonacci(0) = 0, fibonacci(1) = 1
+    } else {
+        return fibonacci(n - 1) + fibonacci(n - 2); // Llamadas recursivas
+    }
+}
+
+int main() {
+    int n;
+
+    // Solicitar al usuario el término de Fibonacci que quiere calcular
+    printf("Introduce un número entero para calcular el Fibonacci: ");
+    scanf("%d", &n);
+
+    // Calcular el n-ésimo número de Fibonacci
+    int result = fibonacci(n);
+
+    // Imprimir el resultado
+    printf("El número Fibonacci en la posición %d es: %d\n", n, result);
+
+    return 0;
+}
