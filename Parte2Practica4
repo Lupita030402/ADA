@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+#include <math.h>
+
+// Estructura para almacenar un punto
+typedef struct Point {
+    int x, y;
+} Point;
+
+// Función para comparar puntos según coordenada X
+int compareX(const void* a, const void* b) {
+    Point *p1 = (Point *)a, *p2 = (Point *)b;
+    return (p1->x - p2->x);
+}
+
+// Función para comparar puntos según coordenada Y
+int compareY(const void* a, const void* b) {
+    Point *p1 = (Point *)a, *p2 = (Point *)b;
+    return (p1->y - p2->y);
+}
+
+// Función para calcular la distancia entre dos puntos
+float dist(Point p1, Point p2) {
+    return sqrt((p1.x - p2.x)*(p1.x - p2.x) + 
+                (p1.y - p2.y)*(p1.y - p2.y));
+}
+
+// Función para encontrar la menor distancia en una submatriz de puntos
+float bruteForce(Point P[], int n) {
+    float min = FLT_MAX;
+    for (int i = 0; i < n; ++i)
+        for (int j = i + 1; j < n; ++j)
+            if (dist(P[i], P[j]) < min)
+                min = dist(P[i], P[j]);
+    return min;
+}
+
+// Encuentra la distancia mínima en el array strip[] de tamaño n
+float stripClosest(Point strip[], int size, float d) {
+    float min = d; // Inicializa la distancia mínima como d
+    qsort(strip, size, sizeof(Point), compareY); // Ordena los puntos por coordenada Y
+
+    // Revisa solo los puntos dentro de una distancia d
+    for (int i = 0; i < size; ++i)
+        for (int j = i + 1; j < size && (strip[j].y - strip[i].y) < min; ++j)
+            if (dist(strip[i], strip[j]) < min)
+                min = dist(strip[i], strip[j]);
+
+    return min;
+}
+
+// Función recursiva para encontrar la menor distancia
+float closestUtil(Point P[], int n) {
+    // Si hay 3 o menos puntos, usa fuerza bruta
+    if (n <= 3)
+        return bruteForce(P, n);
+
+    // Encuentra el punto medio
+    int mid = n / 2;
+    Point midPoint = P[mid];
+
+    // Encuentra la distancia mínima en los dos subarrays
+    float dl = closestUtil(P, mid);
+    float dr = closestUtil(P + mid, n - mid);
+
+    // Encuentra la distancia mínima de las dos
+    float d = fmin(dl, dr);
+
+    // Crea un array strip[] que contiene puntos cercanos a la línea divisoria
+    Point strip[n];
+    int j = 0;
+    for (int i = 0; i < n; i++)
+        if (abs(P[i].x - midPoint.x) < d)
+            strip[j] = P[i], j++;
+
+    // Encuentra la distancia más cercana en strip[] y compara con d
+    return fmin(d, stripClosest(strip, j, d));
+}
+
+// Función principal que encuentra la distancia mínima
+float closest(Point P[], int n) {
+    qsort(P, n, sizeof(Point), compareX); // Ordena los puntos por coordenada X
+    return closestUtil(P, n); // Llama a la función recursiva
+}
+
+int main() {
+    Point P[] = {{2, 3}, {12, 30}, {40, 50}, {5, 1}, {12, 10}, {3, 4}};
+    int n = sizeof(P) / sizeof(P[0]);
+    printf("La distancia más pequeña es %f\n", closest(P, n));
+    return 0;
+}
