@@ -1,0 +1,38 @@
+#include <iostream>//entrada y saLida
+#include <vector> //crea estructuras de datos más dinámicas.
+#include <algorithm>//contiene funciones que permiten realizar 
+//operaciones comunes sobre contenedores
+
+using namespace std;
+
+//calcula la capacidad máxima del contenedor formado por dos puntos
+int maxArea(vector<int>& alt) {
+    int max_area = 0;
+    int izq = 0;
+    int der = alt.size() - 1;
+    
+    
+    //bucle while que se ejcutara siempre y cuando el lado izquierdo sea menor que el derecho
+    while (izq < der) {
+        int alt_min = min(alt[izq], alt[der]); //calcula altura minima
+        int anc = der - izq; //calcula la distancia entre un punto y otro
+        int current_area = alt_min * anc; //calcula area del contedor
+        max_area = max(max_area, current_area); //actualiza el valor del area maxima
+        
+        //si la altura izquierda es menor que la derecha avanza el puntero izquierdo a la derecha 
+        if (alt[izq] < alt[der]) {
+            izq++;
+        } else {
+            der--; //si la altura derecha es menor que la izquierda avanza el puntero derecho a la izquierda 
+        }
+    }
+    
+    return max_area; //retorna el valor de area maxima
+}
+
+int main() {
+    vector<int> alturas = {1, 1}; //recibe un arreglo llamado "alturas"
+    cout << "La capacidad máxima del contenedor es: " << maxArea(alturas) << endl; //Evalua la altura maxima del 
+                                                                                //contenedor "alturas" e imprime el resultado
+    return 0;
+}
