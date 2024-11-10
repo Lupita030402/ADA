@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void comprimirCadena(char *palabra) {
+    int n = strlen(palabra);  // Obtener la longitud de la cadena
+    int i = 0;
+
+    // Recorrer la cadena
+    while (i < n) {
+        char currentChar = palabra[i];  // El carácter actual
+        int count = 1;  // Inicializamos el contador de repeticiones
+
+        // Contar las repeticiones consecutivas del mismo carácter
+        while (i + 1 < n && palabra[i + 1] == currentChar) {
+            i++;
+            count++;
+        }
+
+        // Dividir las repeticiones en bloques de hasta 9
+        while (count > 9) {
+            printf("9%c", currentChar);  // Imprimir bloque de 9 repeticiones
+            count -= 9;  // Restar las 9 repeticiones que ya imprimimos
+        }
+
+        // Imprimir el resto de las repeticiones (menos de 9)
+        if (count > 0) {
+            printf("%d%c", count, currentChar);
+        }
+
+        // Pasar al siguiente carácter
+        i++;
+    }
+    printf("\n");  // Nueva línea al final de la salida
+}
+
+int main() {
+    char palabra[100];  // Cadena de caracteres
+    int esValida = 1;  // Bandera para verificar si la palabra es válida
+
+    printf("Ingrese una palabra: ");
+    scanf("%s", palabra);  // Leer la palabra ingresada
+
+    // Verificar si todos los caracteres son letras
+    for (int i = 0; i < strlen(palabra); i++) {
+        if (!isalpha(palabra[i])) {
+            esValida = 0;
+            break;
+        }
+    }
+
+    if (esValida) {
+        comprimirCadena(palabra);  // Llamar a la función para comprimir la cadena
+    } else {
+        printf("Error: Solo se permiten letras. Ingrese una palabra válida.\n");
+    }
+
+    return 0;
+}
