@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Función para generar el triángulo de Pascal usando programación dinámica
+int** generarTrianguloPascal(int numFilas) {
+    
+    // Crear una tabla bidimensional para almacenar el triángulo
+    int** triangulo = (int**)malloc(numFilas * sizeof(int*));
+    if (triangulo == NULL) {
+        printf("Error al asignar memoria.\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < numFilas; i++) {
+        
+        // Reservar memoria para cada fila
+        triangulo[i] = (int*)malloc((i + 1) * sizeof(int));
+        if (triangulo[i] == NULL) {
+            printf("Error al asignar memoria para la fila %d.\n", i);
+            for (int k = 0; k < i; k++) {
+                free(triangulo[k]);
+            }
+            free(triangulo);
+            exit(1);
+        }
+
+        // Inicializa el primer y último elemento de la fila en 1
+        triangulo[i][0] = 1;
+        triangulo[i][i] = 1;
+
+        // Calcula los valores intermedios usando resultados anteriores
+        for (int j = 1; j < i; j++) {
+            triangulo[i][j] = triangulo[i - 1][j - 1] + triangulo[i - 1][j];
+        }
+    }
+
+    return triangulo;
+}
+
+// Función para imprimir el triángulo de Pascal
+void imprimirTrianguloPascal(int** triangulo, int numFilas) {
+    for (int i = 0; i < numFilas; i++) {
+        for (int j = 0; j <= i; j++) {
+            printf("%d ", triangulo[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Libera memoria asignada dinámicamente
+void liberarTrianguloPascal(int** triangulo, int numFilas) {
+    for (int i = 0; i < numFilas; i++) {
+        free(triangulo[i]);
+    }
+    free(triangulo);
+}
+
+int main() {
+    int numFilas;
+
+    // Lee el número de filas y lo guarda en numFilas
+    printf("Introduce el número de filas, el valor debera estar entre 1 y 30: ");
+    scanf("%d", &numFilas);
+
+    if (numFilas < 1 || numFilas > 30) {
+        printf("El número de filas debe estar entre 1 y 30.\n");
+        return 1;
+    }
+
+    // Genera el triángulo de Pascal
+    int** trianguloPascal = generarTrianguloPascal(numFilas);
+
+    // Imprime el triángulo
+    printf("Triángulo de Pascal:\n");
+    imprimirTrianguloPascal(trianguloPascal, numFilas);
+
+    // Libera memoria
+    liberarTrianguloPascal(trianguloPascal, numFilas);
+
+    return 0;
+}
